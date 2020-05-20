@@ -1,8 +1,11 @@
 server=function(input, output, session) {
   
-  print( as.numeric(input$n_agents))
+
   
   output$distPlot <- renderPlot({
+    
+      print( as.numeric(input$n_agents))
+  print(  seq(0,22,0.001))
     
     rts = seq(0,22,0.001)
     up=dwiener(rts,as.numeric(input$bs_value),as.numeric(input$ndt_value),as.numeric(input$bias_value),as.numeric(input$drift_value), resp="upper")
