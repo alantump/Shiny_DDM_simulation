@@ -40,42 +40,42 @@
       
        
        #random walk model with time
-       nreps <− as.numeric(input$n_agents)
-       nsamples <− 1000 * as.numeric(input$bs_value)
+       nreps <- as.numeric(input$n_agents)
+       nsamples <- 1000 * as.numeric(input$bs_value)
        
-       drift <− as.numeric(input$drift_value) #noninformative stimulus
-       sdrw <− 1 #standard deviation
-       criterion <− as.numeric(input$bs_value) /2 #treshold
+       drift <- as.numeric(input$drift_value) #noninformative stimulus
+       sdrw <- 1 #standard deviation
+       criterion <- as.numeric(input$bs_value) /2 #treshold
        initial_bias = criterion*2*(as.numeric(input$bias_value)-0.5)
        h=0.01
        
-       latencies <− rep(0 , nreps )
-       responses <− rep(0 , nreps )
-       evidence <− matrix(0 , nreps , nsamples+1)
+       latencies <- rep(0 , nreps )
+       responses <- rep(0 , nreps )
+       evidence <- matrix(0 , nreps , nsamples+1)
        for(i in c( 1 : nreps ) ) { 
-         evidence [ i , ] <−   cumsum( c(initial_bias , rnorm( nsamples , drift*h , (sdrw*h^0.5) ) ) )
-         p <− which( abs(evidence[ i , ] )>criterion ) [1]
-         responses [ i ] <− sign( evidence [ i , p ] )
-         latencies[ i ] <− p
+         evidence [ i , ] <-   cumsum( c(initial_bias , rnorm( nsamples , drift*h , (sdrw*h^0.5) ) ) )
+         p <- which( abs(evidence[ i , ] )>criterion ) [1]
+         responses [ i ] <- sign( evidence [ i , p ] )
+         latencies[ i ] <- p
        }
        
        
        
              
-             latencies <− rep(0 , nreps )
-             responses <− rep(0 , nreps )
-             evidence <− matrix(0 , nreps , nsamples+1)
+             latencies <- rep(0 , nreps )
+             responses <- rep(0 , nreps )
+             evidence <- matrix(0 , nreps , nsamples+1)
              for(i in c( 1 : nreps ) ) { 
-               evidence [ i , ] <−   cumsum( c(initial_bias , rnorm( nsamples , drift*h , (sdrw*h^0.5) ) ) )
-               p <− which( abs(evidence[ i , ] )>criterion ) [1]
-               responses [ i ] <− sign( evidence [ i , p ] )
-               latencies[ i ] <− p
+               evidence [ i , ] <-   cumsum( c(initial_bias , rnorm( nsamples , drift*h , (sdrw*h^0.5) ) ) )
+               p <- which( abs(evidence[ i , ] )>criterion ) [1]
+               responses [ i ] <- sign( evidence [ i , p ] )
+               latencies[ i ] <- p
              }
              
              
              
-             tbpn <− min(nreps )
-             evidence2 <− matrix(NA , nreps , nsamples+1)
+             tbpn <- min(nreps )
+             evidence2 <- matrix(NA , nreps , nsamples+1)
              for(i in c( 1 : tbpn ) ) { 
                evidence2[i, 1 : ( latencies[ i]) ]<- evidence[ i ,1 : ( latencies[ i]) ]  } 
 
@@ -92,7 +92,7 @@
              plot_data=tidyr::gather(data, "id","value",1:nreps)
              #plot
              p3 = ggplot(plot_data, aes(x=time,y=value,colour=factor(id))) +
-               geom_line(size=0.9) + geom_hline(yintercept = c( criterion,−criterion )) +  theme( legend.position="none")
+               geom_line(size=0.9) + geom_hline(yintercept = c( criterion, -criterion )) +  theme( legend.position="none")
              
              plot_grid(plot_grid(p1,p2),p3,nrow=2)
              
@@ -106,12 +106,14 @@
        
        
        
+  
        
        
        
   
   
 
+  
   
   
   
