@@ -1,6 +1,6 @@
 server=function(input, output, session) {
   
-  
+  print( as.numeric(input$n_agents))
   
   output$distPlot <- renderPlot({
     
