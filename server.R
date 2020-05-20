@@ -27,8 +27,8 @@ server=function(input, output, session) {
     
     
     #random walk model with time
-    nreps <??? as.numeric(input$n_agents)
-    nsamples <??? 1000 * as.numeric(input$bs_value)
+    nreps = as.numeric(input$n_agents)
+    nsamples = 1000 * as.numeric(input$bs_value)
     
     drift <??? as.numeric(input$drift_value) #noninformative stimulus
     sdrw <??? 1 #standard deviation
