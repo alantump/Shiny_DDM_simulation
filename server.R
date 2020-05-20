@@ -4,8 +4,6 @@ server=function(input, output, session) {
   
   output$distPlot <- renderPlot({
     
-      print( as.numeric(input$n_agents))
-  print(  seq(0,22,0.001))
     
     rts = seq(0,22,0.001)
     up=dwiener(rts,as.numeric(input$bs_value),as.numeric(input$ndt_value),as.numeric(input$bias_value),as.numeric(input$drift_value), resp="upper")
@@ -26,11 +24,10 @@ server=function(input, output, session) {
     p2 = data.frame(y=(up/(low+up)),x=rts) %>% ggplot() + geom_line(aes(y=y,x=x),size=2) +  xlab("RTs") + ylab("Proportion correct choices \n (over time and overall)") +
       geom_hline(yintercept = sum(up)/(sum(low)+sum(up)),size=1.5) + geom_hline(yintercept = 0.5,linetype="dashed") +   xlim(0,max(c(rts[up>0.005],rts[low>0.005]))) 
     
-    plot_grid(p1,p2,nrow=1)
     
     
     #random walk model with time
-    nreps = as.numeric(input$n_agents)
+    nreps = 10#as.numeric(input$n_agents)
     nsamples = 1000 * as.numeric(input$bs_value)
     
     drift = as.numeric(input$drift_value) #noninformative stimulus
