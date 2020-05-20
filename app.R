@@ -4,7 +4,7 @@ library(dplyr)
 library(tidyr)
 library(RWiener)
 library(reshape2)
-
+print(2)
 #first enter some guesses to initiate the plot
 #current guesses can be saved by entering "Save" into the text field.
 #The saved guesses can be loaded by entering "Load" into the text field 
