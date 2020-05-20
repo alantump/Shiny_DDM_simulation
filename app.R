@@ -1,16 +1,5 @@
-library(shiny)
-library(cowplot)
-library(dplyr)
-library(tidyr)
-library(RWiener)
-library(reshape2)
-
-#first enter some guesses to initiate the plot
-#current guesses can be saved by entering "Save" into the text field.
-#The saved guesses can be loaded by entering "Load" into the text field 
 
 
-runApp(list(
   ui=fluidPage(    shinyjs::useShinyjs(),
                     headerPanel("Drift diffusion parameters"),
                    sidebarPanel(sliderInput("ndt_value", label = "Non decision time", min=0.1,max=1, value=0.1, step=0.1),
@@ -19,7 +8,8 @@ runApp(list(
                    sliderInput("bs_value", label = "Boundary seperation", min=0.1,max=5, value=2, step=0.2),
                    sliderInput("n_agents", label = "Simulated agents", min=1,max=50, value=10, step=2)),
   #textInput ("value2", label = HTML("<br /><br /><br /><br /><br /> <br /> Bitte nichts eingeben:"))),
-                     mainPanel(plotOutput(outputId = "distPlot"))),#,width=12
+                     mainPanel(plotOutput(outputId = "distPlot")))
+  
                        
   server=function(input, output, session) {
 
@@ -50,42 +40,42 @@ runApp(list(
       
        
        #random walk model with time
-       nreps <??? as.numeric(input$n_agents)
-       nsamples <??? 1000 * as.numeric(input$bs_value)
+       nreps <− as.numeric(input$n_agents)
+       nsamples <− 1000 * as.numeric(input$bs_value)
        
-       drift <??? as.numeric(input$drift_value) #noninformative stimulus
-       sdrw <??? 1 #standard deviation
-       criterion <??? as.numeric(input$bs_value) /2 #treshold
+       drift <− as.numeric(input$drift_value) #noninformative stimulus
+       sdrw <− 1 #standard deviation
+       criterion <− as.numeric(input$bs_value) /2 #treshold
        initial_bias = criterion*2*(as.numeric(input$bias_value)-0.5)
        h=0.01
        
-       latencies <??? rep (0 , nreps )
-       responses <??? rep (0 , nreps )
-       evidence <??? matrix(0 , nreps , nsamples+1)
+       latencies <− rep (0 , nreps )
+       responses <− rep (0 , nreps )
+       evidence <− matrix(0 , nreps , nsamples+1)
        for (i in c ( 1 : nreps ) ) { 
-         evidence [ i , ] <???   cumsum( c (initial_bias , rnorm( nsamples , drift*h , (sdrw*h^0.5) ) ) )
-         p <??? which( abs(evidence[ i , ] )>criterion ) [1]
-         responses [ i ] <??? sign ( evidence [ i , p ] )
-         latencies[ i ] <??? p
+         evidence [ i , ] <−   cumsum( c (initial_bias , rnorm( nsamples , drift*h , (sdrw*h^0.5) ) ) )
+         p <− which( abs(evidence[ i , ] )>criterion ) [1]
+         responses [ i ] <− sign ( evidence [ i , p ] )
+         latencies[ i ] <− p
        }
        
        
        
              
-             latencies <??? rep (0 , nreps )
-             responses <??? rep (0 , nreps )
-             evidence <??? matrix(0 , nreps , nsamples+1)
+             latencies <− rep (0 , nreps )
+             responses <− rep (0 , nreps )
+             evidence <− matrix(0 , nreps , nsamples+1)
              for (i in c ( 1 : nreps ) ) { 
-               evidence [ i , ] <???   cumsum( c (initial_bias , rnorm( nsamples , drift*h , (sdrw*h^0.5) ) ) )
-               p <??? which( abs(evidence[ i , ] )>criterion ) [1]
-               responses [ i ] <??? sign ( evidence [ i , p ] )
-               latencies[ i ] <??? p
+               evidence [ i , ] <−   cumsum( c (initial_bias , rnorm( nsamples , drift*h , (sdrw*h^0.5) ) ) )
+               p <− which( abs(evidence[ i , ] )>criterion ) [1]
+               responses [ i ] <− sign ( evidence [ i , p ] )
+               latencies[ i ] <− p
              }
              
              
              
-             tbpn <??? min(nreps )
-             evidence2 <??? matrix(NA , nreps , nsamples+1)
+             tbpn <− min(nreps )
+             evidence2 <− matrix(NA , nreps , nsamples+1)
              for (i in c( 1 : tbpn ) ) { 
                evidence2[i, 1 : ( latencies[ i]) ]<- evidence[ i ,1 : ( latencies[ i]) ]  } 
 
@@ -102,7 +92,7 @@ runApp(list(
              plot_data=tidyr::gather(data, "id","value",1:nreps)
              #plot
              p3 = ggplot(plot_data, aes(x=time,y=value,colour=factor(id))) +
-               geom_line(size=0.9) + geom_hline(yintercept = c( criterion,???criterion )) +  theme( legend.position="none")
+               geom_line(size=0.9) + geom_hline(yintercept = c( criterion,−criterion )) +  theme( legend.position="none")
              
              plot_grid(plot_grid(p1,p2),p3,nrow=2)
              
@@ -110,7 +100,7 @@ runApp(list(
            }, height = 300*2, width = 300*2)
            
            
-         }))
+         }
        
        
        
@@ -119,6 +109,7 @@ runApp(list(
        
        
        
+  
   
 
   
