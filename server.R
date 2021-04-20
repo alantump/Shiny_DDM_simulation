@@ -16,12 +16,13 @@ server=function(input, output, session) {
                          y=c(0,max(up),0,(-max(low))),
                          type=c("up","up","low","low"))
     
-    p1 = rbind(data.frame(rts,y=up,type="up"),data.frame(rts,y=(-low),type="low")) %>% ggplot() + geom_line(aes(x=rts,y=y,color=type),size=2)+
-      xlim(0,max(c(rts[up>0.005],rts[low>0.005]))) + ylim(-max(low),max(up)) + xlab("RTs") + ylab("Densitiy and means as vertical lines") + geom_hline(yintercept = 0,linetype="dashed") +
-      geom_line(data=line_data,aes(x=x,y=y,color=type),size=1.5)+ scale_color_discrete(name="Choice",labels=c("Correct", "Wrong")) + theme( legend.position=c(0.7,.2)) 
+     p1 = rbind(data.frame(rts,y=up,type="up"),data.frame(rts,y=(-low),type="low")) %>% ggplot() + geom_line(aes(x=rts,y=y,color=type),size=2)+
+      xlim(0,max(c(rts[up>0.005],rts[low>0.005]))) + ylim(-max(low),max(up)) + xlab("RTs") + ylab("Densitiy and mean RTs as vertical lines") + geom_hline(yintercept = 0,linetype="dashed") +
+      geom_line(data=line_data,aes(x=x,y=y,color=type),size=1.5,linetype="dashed")+ scale_color_manual(name="Choice",labels=c("Correct", "Wrong"),values=c("#E69F00", "#56B4E9")) + theme( legend.position=c(0.7,.2)) 
     
-    p2 = data.frame(y=(up/(low+up)),x=rts) %>% ggplot() + geom_line(aes(y=y,x=x),size=2) +  xlab("RTs") + ylab("Proportion correct choices \n (over time and overall)") +
-      geom_hline(yintercept = sum(up)/(sum(low)+sum(up)),size=1.5) + geom_hline(yintercept = 0.5,linetype="dashed") +   xlim(0,max(c(rts[up>0.005],rts[low>0.005]))) 
+    p2 = data.frame(y=(up/(low+up)),x=rts) %>% ggplot() + geom_line(aes(y=y,x=x),size=2) +  xlab("RTs") + ylab("Proportion correct choices \n over time") +
+       annotate(geom="text", x=max(c(rts[up>0.005],rts[low>0.005]))/2, y=0.6, label=paste0("Mean proportion \n correct: ",round(sum(up)/(sum(low)+sum(up)),2))) + geom_hline(yintercept = 0.5,linetype="dashed") +   xlim(0,max(c(rts[up>0.005],rts[low>0.005]))) 
+    
     
     #plot_grid(p1,p2,nrow=1)
     
