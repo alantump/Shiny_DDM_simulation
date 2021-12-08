@@ -6,8 +6,10 @@ server=function(input, output, session) {
   #input$drift_value =0.2
   #input$bs_value =2
   #input$n_agents = 10
-  #output$distPlot =  renderPlot({
   #input$drift_variance = 2 
+  
+  
+  output$distPlot =  renderPlot({
   
     rts = seq(0,22,0.001)
     
