@@ -1,12 +1,30 @@
 server=function(input, output, session) {
   
+  #input=list()
+  #input$bias_value = 0.5
+  #input$ndt_value = 0.01
+  #input$drift_value =0.2
+  #input$bs_value =2
+  #input$n_agents = 10
+  #output$distPlot =  renderPlot({
+  #input$drift_variance = 2 
   
-  
-  output$distPlot =  renderPlot({
-    
     rts = seq(0,22,0.001)
-    up=dwiener(rts,as.numeric(input$bs_value),as.numeric(input$ndt_value),as.numeric(input$bias_value),as.numeric(input$drift_value), resp="upper")
-    low=dwiener(rts,as.numeric(input$bs_value),as.numeric(input$ndt_value),as.numeric(input$bias_value),as.numeric(input$drift_value), resp="lower")
+    
+    sd_span = 2 
+    divide_window = 11 #11 seems good %5 fast and 1 without
+    
+    distrete_gauss_interval = seq(-sd_span,sd_span,length.out =  divide_window+1)
+    prob_weights = diff(pnorm(distrete_gauss_interval))/sum(diff(pnorm(distrete_gauss_interval)))
+    u_drifts=(distrete_gauss_interval[1:(length(distrete_gauss_interval)-1)]+  ((sd_span*2)/(divide_window)/2)) * as.numeric(input$drift_variance) 
+    
+    low = up = rep(0,length(rts))
+    for(ii in 1:length(u_drifts)){
+    
+    up = up + dwiener(rts,as.numeric(input$bs_value),as.numeric(input$ndt_value),as.numeric(input$bias_value),as.numeric(input$drift_value) + u_drifts[ii], resp="upper") * prob_weights[ii]
+    low = low + dwiener(rts,as.numeric(input$bs_value),as.numeric(input$ndt_value),as.numeric(input$bias_value),as.numeric(input$drift_value) + u_drifts[ii], resp="lower") * prob_weights[ii]
+    }
+    
     
     test=rwiener(1000,as.numeric(input$bs_value),as.numeric(input$ndt_value),as.numeric(input$bias_value),as.numeric(input$drift_value))
     mean(test$resp=="upper")
@@ -32,11 +50,11 @@ server=function(input, output, session) {
     nreps = as.numeric(input$n_agents)
     nsamples = 1000 * as.numeric(input$bs_value)
     
-    drift = as.numeric(input$drift_value) #noninformative stimulus
+    drift = rnorm(nreps,as.numeric(input$drift_value), as.numeric(input$drift_variance)) #informative stimulus
     sdrw = 1 #standard deviation
     criterion = as.numeric(input$bs_value) /2 #treshold
     initial_bias = criterion*2*(as.numeric(input$bias_value)-0.5)
-    h=0.01
+    h=0.025
     
     latencies = rep (0 , nreps )
     responses = rep (0 , nreps )
