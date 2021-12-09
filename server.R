@@ -3,10 +3,10 @@ server=function(input, output, session) {
   #input=list()
   #input$bias_value = 0.5
   #input$ndt_value = 0.01
-  #input$drift_value =0.2
-  #input$bs_value =2
-  #input$n_agents = 10
-  #input$drift_variance = 2 
+  #input$drift_value = 0.4
+  #input$bs_value =3
+  #input$n_agents = 10000
+  #input$drift_variance = 2
   
   
   output$distPlot =  renderPlot({
@@ -14,7 +14,7 @@ server=function(input, output, session) {
     rts = seq(0,22,0.001)
     
     sd_span = 2 
-    divide_window = 11 #11 seems good %5 fast and 1 without
+    divide_window = 11 #11 seems good %7 fast and 1 without
     
     distrete_gauss_interval = seq(-sd_span,sd_span,length.out =  divide_window+1)
     prob_weights = diff(pnorm(distrete_gauss_interval))/sum(diff(pnorm(distrete_gauss_interval)))
@@ -44,7 +44,7 @@ server=function(input, output, session) {
        annotate(geom="text", x=max(c(rts[up>0.005],rts[low>0.005]))/2, y=0.6, label=paste0("Mean proportion \n correct: ",round(sum(up)/(sum(low)+sum(up)),2))) + geom_hline(yintercept = 0.5,linetype="dashed") +   xlim(0,max(c(rts[up>0.005],rts[low>0.005]))) 
     
     
-    #plot_grid(p1,p2,nrow=1)
+    plot_grid(p1,p2,nrow=1)
     
     
     
@@ -56,7 +56,7 @@ server=function(input, output, session) {
     sdrw = 1 #standard deviation
     criterion = as.numeric(input$bs_value) /2 #treshold
     initial_bias = criterion*2*(as.numeric(input$bias_value)-0.5)
-    h=0.025
+    h=0.01
     
     latencies = rep (0 , nreps )
     responses = rep (0 , nreps )
@@ -75,12 +75,15 @@ server=function(input, output, session) {
     responses = rep (0 , nreps )
     evidence = matrix(0 , nreps , nsamples+1)
     for (i in c ( 1 : nreps ) ) { 
-      evidence [ i , ] =   cumsum( c (initial_bias , rnorm( nsamples , drift*h , (sdrw*h^0.5) ) ) )
+      evidence [ i , ] =   cumsum( c (initial_bias , rnorm( nsamples , drift[i]*h , (sdrw*h^0.5) ) ) )
       p = which( abs(evidence[ i , ] )>criterion ) [1]
       responses [ i ] = sign ( evidence [ i , p ] )
       latencies[ i ] = p
     }
-    
+    #pp = data.frame(responses, latencies)%>% mutate(responses = (responses+1)/2, latencies=round(latencies*h,digits = 1))  %>% 
+    #  group_by(latencies) %>% summarise(m=mean(responses)) %>% 
+    #  ggplot(aes(x=latencies,y=m)) +geom_point() + xlim(0,max(c(rts[up>0.05],rts[low>0.05]))) + geom_hline(yintercept = 0.5) +
+    #  annotate(geom="text", x=max(c(rts[up>0.05],rts[low>0.05]))/2, y=0.6, label=paste0("Mean proportion \n correct: ",round(mean((responses+1)/2),2)))
     
     
     tbpn = min(nreps )
@@ -103,7 +106,7 @@ server=function(input, output, session) {
     p3 = ggplot(plot_data, aes(x=time,y=value,colour=factor(id))) +
       geom_line(size=0.9) + geom_hline(yintercept = c( criterion, -criterion )) +  theme( legend.position="none")
     
-    plot_grid(plot_grid(p1,p2,labels="AUTO"),p3,nrow=2)
+    plot_grid(plot_grid(p1,p2,labels="AUTO"),p3 ,nrow=2)
     
     
   }, height = 300*2, width = 300*2)
